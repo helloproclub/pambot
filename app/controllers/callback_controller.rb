@@ -1,4 +1,6 @@
 class CallbackController < ApplicationController
+  skip_before_action :verify_authenticity_token, only: [:index]
+
   def root
     render plain: 'Pambot'
   end
