@@ -1,0 +1,48 @@
+class ApplicationController < ActionController::Base
+  protected
+
+  attr_accessor :event
+
+  def client
+    @client ||= Line::Bot::Client.new do |config|
+      config.channel_secret = ENV['LINE_CHANNEL_SECRET']
+      config.channel_token = ENV['LINE_CHANNEL_TOKEN']
+    end
+  end
+
+  def grants
+    [
+      ENV['PAMBOT_STAGGING_ID'],
+      ENV['PAMBOT_PROCLUB_ID'],
+    ]
+  end
+
+  def granted? current_id
+    grants.include? current_id
+  end
+
+  def is_group?
+    @event['source']['type'] == 'group'
+  end
+
+  def is_room?
+    @event['source']['type'] == 'room'
+  end
+
+  def is_user?
+    @event['source']['type'] == 'user'
+  end
+
+  def current_id
+    ret = nil
+    ret = @event['source']['groupId'] if is_group?
+    ret = @event['source']['roomId'] if is_room?
+    ret = @event['source']['userId'] if is_user?
+
+    ret
+  end
+
+  def reply message
+    client.reply_message @event['replyToken'], message
+  end
+end
