@@ -14,6 +14,8 @@ class CallbackController < ApplicationController
       return
     end
 
+    logger.info "Request body: #{body}"
+
     events = client.parse_events_from body
     events.each do |event|
       @event = event
