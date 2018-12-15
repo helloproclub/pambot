@@ -48,6 +48,7 @@ class CallbackController < ApplicationController
         if not granted?
           client.leave_group(current_id) if is_group?
           client.leave_room(current_id) if is_room?
+          return
         end
 
         members = []
@@ -57,6 +58,15 @@ class CallbackController < ApplicationController
         logger.info "Members: #{members}"
       when Line::Bot::Event::Message
         logger.info "Got a message from #{current_id}"
+
+        granted_members = []
+        if not granted_members.include? current_id
+          reply ({
+            type: 'text',
+            text: 'Kamu tidak mendapatkan izin untuk menggunakan bot ini...',
+          })
+          return
+        end
 
         case event.type
         when Line::Bot::Event::MessageType::Text
