@@ -59,7 +59,7 @@ class CallbackController < ApplicationController
         logger.info "Got a message from #{current_id}"
 
         case event.type
-        when Line::Bot::MessageType::Text
+        when Line::Bot::Event::MessageType::Text
           reply ({
             type: 'text',
             text: event.message['text'],
