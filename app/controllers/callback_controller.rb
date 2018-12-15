@@ -1,4 +1,8 @@
 class CallbackController < ApplicationController
+  def root
+    render plain: 'Pambot'
+  end
+
   def index
     body = request.body.read
 
@@ -27,10 +31,10 @@ class CallbackController < ApplicationController
           #2019ProclubAllOut
         MSG
 
-        reply {
+        reply ({
           type: 'text',
-          text: msg.rstrip!
-        }
+          text: msg.rstrip!,
+        })
       when Line::Bot::Event::Unfollow
         logger.info "Unfollowed by user with ID: #{current_id}"
       when Line::Bot::Event::Join
