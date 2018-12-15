@@ -51,9 +51,7 @@ class CallbackController < ApplicationController
           return
         end
 
-        members = []
-        members = client.get_group_member_ids if is_group?
-        members = client.get_room_member_ids if is_room?
+        members = get_member_ids
 
         logger.info "Members: #{members}"
       when Line::Bot::Event::Message

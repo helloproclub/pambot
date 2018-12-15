@@ -45,4 +45,12 @@ class ApplicationController < ActionController::Base
   def reply message
     client.reply_message @event['replyToken'], message
   end
+
+  def get_member_ids
+    ret = []
+    ret = client.get_group_member_ids(current_id) if is_group?
+    ret = client.get_room_member_ids(current_id) if is_room?
+
+    ret
+  end
 end
