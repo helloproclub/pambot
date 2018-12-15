@@ -52,6 +52,14 @@ class CallbackController < ApplicationController
         members = client.get_room_member_ids if is_room?
 
         logger.info "Members: #{members}"
+      when Line::Bot::Event::Message
+        case event.type
+        when Line::Bot::MessageType::Text
+          reply ({
+            type: 'text',
+            text: event.message['text'],
+          })
+        end
       end
     end
   end
