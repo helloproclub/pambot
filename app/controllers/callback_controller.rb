@@ -11,6 +11,7 @@ class CallbackController < ApplicationController
     signature = request.env['HTTP_X_LINE_SIGNATURE']
     unless client.validate_signature body, signature
       render plain: 'Bad Request', status: :bad_request
+      return
     end
 
     events = client.parse_events_from body
@@ -53,6 +54,8 @@ class CallbackController < ApplicationController
 
         logger.info "Members: #{members}"
       when Line::Bot::Event::Message
+        logger.info "Got a message from #{current_id}"
+
         case event.type
         when Line::Bot::MessageType::Text
           reply ({
