@@ -88,7 +88,7 @@ class CallbackController < ApplicationController
           if not granted_members.include? current_id
             reply ({
               type: 'text',
-              text: 'Kamu gadapetin izin buat make bot ini...',
+              text: 'Kamu gadapet izin buat make bot ini...',
             })
             return
           end
