@@ -45,11 +45,11 @@ class CallbackController < ApplicationController
       when Line::Bot::Event::Join
         logger.info "Joined a chat with source ID: #{current_id}"
 
-        msg = "Granting all members to use Pambot... "
+        msg = 'Granting all members to use Pambot... '
 
         if not granted? current_id
           msg += "failed\n\nThis is not in the \"GRANTED\" list.\n"
-          msg += "Exiting..."
+          msg += 'I better leave...'
 
           reply ({
             type: 'text',
@@ -61,16 +61,21 @@ class CallbackController < ApplicationController
           return
         end
 
-        members = get_member_ids
+				msg += "pending\n\n"
+				msg += 'LINE does not supports this anymore. '
+				msg += 'I will grants you permission at the moment you are sending message here.'
 
-        logger.info "Members: #{members}"
+				reply ({
+					type: 'text',
+					text: msg,
+				})
       when Line::Bot::Event::Message
         logger.info "Got a message from #{current_id}"
 
         if not granted? current_id
           reply ({
             type: 'text',
-            text: 'I better leave...',
+            text: 'I\'m not granted to be here. I better leave...',
           })
 
           leave_group! if is_group?
@@ -91,8 +96,18 @@ class CallbackController < ApplicationController
           when Line::Bot::Event::MessageType::Text
             reply ({
               type: 'text',
-              text: event.message['text'],
+              text: 'Still in development. Please wait.',
             })
+          end
+        else
+          member = Member.find_by(line_user_id: user_id)
+          if not member.present?
+            member = Member.new line_user_id: user_id
+            if member.save
+              logger.info "Success to registering #{user_id}"
+            else
+              logger.info "Failed to registering #{user_id}"
+            end
           end
         end
       end
