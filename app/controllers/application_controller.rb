@@ -53,4 +53,12 @@ class ApplicationController < ActionController::Base
 
     ret
   end
+
+  def leave_group!
+    client.leave_group current_id
+  end
+
+  def leave_room!
+    client.leave_room current_id
+  end
 end

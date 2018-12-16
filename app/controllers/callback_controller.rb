@@ -45,9 +45,19 @@ class CallbackController < ApplicationController
       when Line::Bot::Event::Join
         logger.info "Joined a chat with source ID: #{current_id}"
 
-        if not granted?
-          client.leave_group(current_id) if is_group?
-          client.leave_room(current_id) if is_room?
+        msg = "Granting all members to use Pambot... "
+
+        if not granted? current_id
+          msg += "failed\n\nThis is not in the \"GRANTED\" list.\n"
+          msg += "Exiting..."
+
+          reply ({
+            type: 'text',
+            text: msg,
+          })
+
+          leave_group! if is_group?
+          leave_room! if is_room?
           return
         end
 
@@ -57,21 +67,33 @@ class CallbackController < ApplicationController
       when Line::Bot::Event::Message
         logger.info "Got a message from #{current_id}"
 
-        granted_members = []
-        if not granted_members.include? current_id
+        if not granted? current_id
           reply ({
             type: 'text',
-            text: 'Kamu tidak mendapatkan izin untuk menggunakan bot ini...',
+            text: 'I better leave...',
           })
-          return
+
+          leave_group! if is_group?
+          leave_room! if is_room?
         end
 
-        case event.type
-        when Line::Bot::Event::MessageType::Text
-          reply ({
-            type: 'text',
-            text: event.message['text'],
-          })
+        if is_user?
+          granted_members = []
+          if not granted_members.include? current_id
+            reply ({
+              type: 'text',
+              text: 'Kamu tidak mendapatkan izin untuk menggunakan bot ini...',
+            })
+            return
+          end
+
+          case event.type
+          when Line::Bot::Event::MessageType::Text
+            reply ({
+              type: 'text',
+              text: event.message['text'],
+            })
+          end
         end
       end
     end
