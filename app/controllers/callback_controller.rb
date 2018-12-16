@@ -45,11 +45,11 @@ class CallbackController < ApplicationController
       when Line::Bot::Event::Join
         logger.info "Joined a chat with source ID: #{current_id}"
 
-        msg = 'Granting all members to use Pambot... '
+        msg = 'Memberikan anggota izin akses menggunakan Pambot... '
 
         if not granted? current_id
-          msg += "failed\n\nThis is not in the \"GRANTED\" list.\n"
-          msg += 'I better leave...'
+          msg += "gagal.\n\nGrup/room ini tidak diberikan izin.\n"
+          msg += 'Sebaiknya aku keluar deh...'
 
           reply ({
             type: 'text',
@@ -61,9 +61,10 @@ class CallbackController < ApplicationController
           return
         end
 
-				msg += "pending\n\n"
-				msg += 'LINE does not supports this anymore. '
-				msg += 'I will grants you permission at the moment you are sending message here.'
+        msg += "pending.\n\n"
+				msg += 'LINE udah ga support ini lagi. '
+				msg += 'Ku tambahin izinnya ketika kamu ngirim pesan di grup/room ini '
+        msg += 'aja deh'
 
 				reply ({
 					type: 'text',
@@ -75,7 +76,7 @@ class CallbackController < ApplicationController
         if not is_user? and not granted? current_id
           reply ({
             type: 'text',
-            text: 'I\'m not granted to be here. I better leave...',
+            text: 'Ah, aku gadiizinin buat di sini. Aku keluar aja deh...',
           })
 
           leave_group! if is_group?
@@ -87,7 +88,7 @@ class CallbackController < ApplicationController
           if not granted_members.include? current_id
             reply ({
               type: 'text',
-              text: 'Kamu tidak mendapatkan izin untuk menggunakan bot ini...',
+              text: 'Kamu gadapetin izin buat make bot ini...',
             })
             return
           end
@@ -96,7 +97,7 @@ class CallbackController < ApplicationController
           when Line::Bot::Event::MessageType::Text
             reply ({
               type: 'text',
-              text: 'Still in development. Please wait.',
+              text: 'Tunggu bentar ya, masih lagi nyoba nambahin fitur baru',
             })
           end
         else
