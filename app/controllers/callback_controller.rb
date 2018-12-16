@@ -72,7 +72,7 @@ class CallbackController < ApplicationController
       when Line::Bot::Event::Message
         logger.info "Got a message from #{current_id}"
 
-        if not granted? current_id
+        if not is_user? and not granted? current_id
           reply ({
             type: 'text',
             text: 'I\'m not granted to be here. I better leave...',
